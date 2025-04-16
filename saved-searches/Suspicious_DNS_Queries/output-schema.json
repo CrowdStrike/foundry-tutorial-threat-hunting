@@ -1,0 +1,24 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"description": "Generated response schema",
+	"properties": {
+		"DomainName": {
+			"title": "DomainName",
+			"type": "string"
+		},
+		"_count": {
+			"title": "Count",
+			"type": "integer"
+		},
+		"aid": {
+			"title": "Aid",
+			"type": "string"
+		}
+	},
+	"required": [
+		"DomainName",
+		"_count",
+		"aid"
+	],
+	"type": "object"
+}

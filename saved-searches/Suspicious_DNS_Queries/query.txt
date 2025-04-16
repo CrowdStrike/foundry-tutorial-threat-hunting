@@ -1,0 +1,3 @@
+aid=?{aid="*"}
+| groupBy([aid, DomainName], limit=max) 
+| _count < 3

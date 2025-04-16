@@ -1,0 +1,4 @@
+#event_simpleName=ProcessRollup2 OR #event_simpleName=SyntheticProcessRollup2
+ImageFileName=/(\\Desktop\\|\\AppData\\)/
+| join({#event_simpleName=UserIdentity | groupBy([aid, AuthenticationID, UserName], limit=max)}, field=AuthenticationID, include=UserName)
+| table([aid, UserName, ImageFileName, SHA256HashData], limit=1000)

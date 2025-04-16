@@ -1,0 +1,76 @@
+name: Suspicious DNS Activity Email
+description: Weekly email for devices with suspicious DNS activity
+parameters:
+    actions:
+        configuration:
+            device_query_23e7665a:
+                properties:
+                    last_seen:
+                        required: false
+                        default_value: last_seen.week
+provision_on_install: true
+trigger:
+    next:
+        - device_query_23e7665a
+    event: Schedule
+    schedule:
+        time_cycle: 34 16 * * 4
+        start_date: ""
+        end_date: ""
+        tz: America/Los_Angeles
+        skip_concurrent: false
+actions:
+    device_query_23e7665a:
+        next:
+            - activity_23e7665a_a375_4d0c_a27d_4207ace24089_device_query_devices_452be0d5
+        id: 68ffa99af40c84b36462daa076f535d0
+        properties: {}
+loops:
+    activity_23e7665a_a375_4d0c_a27d_4207ace24089_device_query_devices_452be0d5:
+        display: For each Sensor IDs; Concurrently
+        for:
+            input: device_query_23e7665a.Device.query.devices
+            continue_on_partial_execution: true
+            sequential: false
+        trigger:
+            next:
+                - event_query___suspicious_dns_queries_36a1beb4
+        actions:
+            event_query___suspicious_dns_queries_36a1beb4:
+                next:
+                    - activity_36a1beb4_6c8b_4d6c_a279_64d503990eda_logscale_searchresult_suspicious_dns_queries_results_4f0e0c4c
+                id: logscale_saved_search.Suspicious DNS Queries
+                properties:
+                    aid: ${device_query_23e7665a.Device.query.devices.#}
+                    workflow_csv_header_fields: []
+                    workflow_export_event_query_results_to_csv: false
+        loops:
+            activity_36a1beb4_6c8b_4d6c_a279_64d503990eda_logscale_searchresult_suspicious_dns_queries_results_4f0e0c4c:
+                display: For each Event query results; Concurrently
+                for:
+                    input: event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results
+                    continue_on_partial_execution: false
+                    sequential: false
+                trigger:
+                    next:
+                        - count_instance_is_greater_than_1_cb293379
+                actions:
+                    send_email_3affc871:
+                        id: 07413ef9ba7c47bf5a242799f59902cc
+                        properties:
+                            _fields:
+                                - ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.raw_results}
+                            msg: |
+                                Host ID: ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results.#.aid}
+                                DNS Count: ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results.#._count}
+                                Instance Name: ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results.#.DomainName}
+                            subject: Suspicious DNS Activity - Weekly Report
+                            to:
+                                - howard.liu@crowdstrike.com
+                conditions:
+                    count_instance_is_greater_than_1_cb293379:
+                        next:
+                            - send_email_3affc871
+                        expression: event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results.#._count:>1
+                        display:
+                            - Count instance is greater than 1

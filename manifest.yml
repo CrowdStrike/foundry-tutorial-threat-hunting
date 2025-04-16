@@ -1,0 +1,75 @@
+name: Threat Hunting
+description: A threat hunting dashboard and scheduled report for suspicious DNS activity
+logo: ""
+manifest_version: ""
+ignored: []
+ui:
+  homepage: dashboards.Threat_Hunting_Dashboard
+  extensions: []
+  pages: {}
+  dashboards:
+    Threat_Hunting_Dashboard:
+      name: Threat Hunting Dashboard
+      description: Dashboard Threat Hunting Dashboard
+      config_path: dashboards/Threat_Hunting_Dashboard.json
+      permissions: []
+  navigation:
+    links:
+      - path: N/A
+        name: Threat Hunting Dashboard
+        permissions: []
+        ref: dashboards.Threat_Hunting_Dashboard
+api_integrations: []
+rtr_scripts: []
+collections: []
+auth:
+  scopes: []
+  permissions: {}
+  roles: []
+functions: []
+workflows:
+  - name: Suspicious DNS Activity Email
+    path: workflows/Suspicious_DNS_Activity_Email.yml
+parsers: []
+logscale:
+  saved_searches:
+    - name: Process Execution in User Space
+      description: ""
+      repo_or_view: foundry:sensor
+      query_path: saved-searches/Process_Execution_in_User_Space/query.txt
+      query_params: {}
+      input_schema_path: saved-searches/Process_Execution_in_User_Space/input-schema.json
+      earliest: 7d
+      latest: now
+      workflow_integration:
+        tags: []
+        system_action: false
+      include_test_data: false
+    - name: Encoded PowerShell Commands
+      description: ""
+      repo_or_view: foundry:sensor
+      query_path: saved-searches/Encoded_PowerShell_Commands/query.txt
+      query_params: {}
+      input_schema_path: saved-searches/Encoded_PowerShell_Commands/input-schema.json
+      earliest: 7d
+      latest: now
+      workflow_integration:
+        tags: []
+        system_action: false
+      include_test_data: false
+    - name: Suspicious DNS Queries
+      description: ""
+      repo_or_view: foundry:sensor
+      query_path: saved-searches/Suspicious_DNS_Queries/query.txt
+      query_params:
+        aid: '*'
+      input_schema_path: saved-searches/Suspicious_DNS_Queries/input-schema.json
+      output_schema_path: saved-searches/Suspicious_DNS_Queries/output-schema.json
+      earliest: 7d
+      latest: now
+      workflow_integration:
+        tags:
+          - Threat Hunting
+        system_action: false
+      include_test_data: false
+lookup_files: []
