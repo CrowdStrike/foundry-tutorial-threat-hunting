@@ -1,3 +1,4 @@
+app_id: d00c3088f24e40e0904183fe2bcb57f9
 name: Threat Hunting
 description: A threat hunting dashboard and scheduled report for suspicious DNS activity
 logo: ""
@@ -9,11 +10,13 @@ ui:
   pages: {}
   dashboards:
     Threat_Hunting_Dashboard:
+      id: 3af50a78bb724669ab2c7b27b9557bcc
       name: Threat Hunting Dashboard
       description: Dashboard Threat Hunting Dashboard
       config_path: dashboards/Threat_Hunting_Dashboard.json
       permissions: []
   navigation:
+    id: dcedf360e66341d687b088910070a6c1
     links:
       - path: N/A
         name: Threat Hunting Dashboard
@@ -28,12 +31,14 @@ auth:
   roles: []
 functions: []
 workflows:
-  - name: Suspicious DNS Activity Email
+  - id: 1d5eec4abff94183a05d65399e4ec6be
+    name: Suspicious DNS Activity Email
     path: workflows/Suspicious_DNS_Activity_Email.yml
 parsers: []
 logscale:
   saved_searches:
-    - name: Process Execution in User Space
+    - id: 3a70fd8949b049659a20ccd5b9bd71c1
+      name: Process Execution in User Space
       description: ""
       repo_or_view: foundry:sensor
       query_path: saved-searches/Process_Execution_in_User_Space/query.txt
@@ -45,7 +50,8 @@ logscale:
         tags: []
         system_action: false
       include_test_data: false
-    - name: Encoded PowerShell Commands
+    - id: 34a70f3df69b4eecad20798dfd69b7ae
+      name: Encoded PowerShell Commands
       description: ""
       repo_or_view: foundry:sensor
       query_path: saved-searches/Encoded_PowerShell_Commands/query.txt
@@ -57,7 +63,8 @@ logscale:
         tags: []
         system_action: false
       include_test_data: false
-    - name: Suspicious DNS Queries
+    - id: d40a14918ec843e581ec3addf5a46454
+      name: Suspicious DNS Queries
       description: ""
       repo_or_view: foundry:sensor
       query_path: saved-searches/Suspicious_DNS_Queries/query.txt
