@@ -1,5 +1,6 @@
 name: Suspicious DNS Activity Email
 description: Weekly email for devices with suspicious DNS activity
+multi_instance: true
 parameters:
     actions:
         configuration:
