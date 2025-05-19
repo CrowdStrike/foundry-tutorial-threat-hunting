@@ -21,9 +21,7 @@ This code is the result of doing the Falcon Foundry [Create a Threat Hunting Das
 
 > [!TIP]
 > If you get an error that the name already exists, change the name to something unique to your CID when importing the app.
-
-> [!NOTE]
-> Worflow config `multi_instance` is `true`. It allows creation of multiple instance of a workflow for the same customer
+> Worflow [worflows/Suspicious_DNS_Activity_Email.yml](worflows/Suspicious_DNS_Activity_Email.yml) config `multi_instance` is `true`. It allows creation of multiple instance of a workflow for the same customer. 
 
 ## Links
 
