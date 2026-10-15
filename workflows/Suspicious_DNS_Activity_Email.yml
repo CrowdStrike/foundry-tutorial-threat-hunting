@@ -1,5 +1,5 @@
 name: Suspicious DNS Activity Email
-description: Weekly email listing rarely seen domains across every host
+description: Weekly email for devices with suspicious DNS activity
 multi_instance: true
 parameters:
     actions:
@@ -11,38 +11,45 @@ parameters:
 provision_on_install: true
 trigger:
     type: Scheduled
-    event: Schedule
     next:
-        - EventQuery
+        - CIDSpecificEventQuerySuspiciousDNSQueries
+    event: Schedule
+    name: Scheduled workflow
     schedule:
         time_cycle: 34 16 * * 4
         start_date: ""
         end_date: ""
         tz: America/Los_Angeles
         skip_concurrent: false
+    version_constraint: ~1
 actions:
-    EventQuery:
+    CIDSpecificEventQuerySuspiciousDNSQueries:
         id: logscale_saved_search.Suspicious DNS Queries
-        name: Suspicious DNS Queries
-        version_constraint: ~0
+        default_name: CID-specific event query - Suspicious DNS Queries
+        name: CID-specific event query - Suspicious DNS Queries
         next:
-            - has_results
+            - event_count_is_greater_than_0
         properties:
             aid: '*'
+            output_files_only: false
             workflow_csv_header_fields: []
             workflow_export_event_query_results_to_csv: false
+        version_constraint: ~0
     SendEmail:
         id: 07413ef9ba7c47bf5a242799f59902cc
+        default_name: Send email
         name: Send email
-        version_constraint: ~1
         properties:
+            _fields:
+                - ${CIDSpecificEventQuerySuspiciousDNSQueries.raw_results}
+            msg: Rarely seen domains from this week's hunt are included below.
+            msg_type: text
             subject: Suspicious DNS Activity - Weekly Report
-            msg: |
-                Rarely seen domains from this week's hunt:
-
-                ${data['EventQuery.raw_results']}
+        version_constraint: ~1
 conditions:
-    has_results:
-        cel_expression: data['EventQuery.results'].size() > 0
+    event_count_is_greater_than_0:
         next:
             - SendEmail
+        expression: CIDSpecificEventQuerySuspiciousDNSQueries.event_count:>0
+        display:
+            - Event count is greater than 0
