@@ -4,71 +4,52 @@ multi_instance: true
 parameters:
     actions:
         configuration:
-            device_query_23e7665a:
+            SendEmail:
                 properties:
-                    last_seen:
-                        required: false
-                        default_value: last_seen.week
+                    to:
+                        required: true
 provision_on_install: true
 trigger:
     type: Scheduled
     next:
-        - device_query_23e7665a
+        - CIDSpecificEventQuerySuspiciousDNSQueries
     event: Schedule
+    name: Scheduled workflow
     schedule:
         time_cycle: 34 16 * * 4
         start_date: ""
         end_date: ""
         tz: America/Los_Angeles
         skip_concurrent: false
+    version_constraint: ~1
 actions:
-    device_query_23e7665a:
+    CIDSpecificEventQuerySuspiciousDNSQueries:
+        id: logscale_saved_search.Suspicious DNS Queries
+        default_name: CID-specific event query - Suspicious DNS Queries
+        name: CID-specific event query - Suspicious DNS Queries
         next:
-            - activity_23e7665a_a375_4d0c_a27d_4207ace24089_device_query_devices_452be0d5
-        id: 68ffa99af40c84b36462daa076f535d0
-        name: Device Query
-        properties: {}
-loops:
-    activity_23e7665a_a375_4d0c_a27d_4207ace24089_device_query_devices_452be0d5:
-        display: For each Sensor IDs; Concurrently
-        for:
-            input: device_query_23e7665a.Device.query.devices
-            continue_on_partial_execution: true
-            sequential: false
-        trigger:
-            next:
-                - event_query___suspicious_dns_queries_36a1beb4
-        actions:
-            event_query___suspicious_dns_queries_36a1beb4:
-                next:
-                    - activity_36a1beb4_6c8b_4d6c_a279_64d503990eda_logscale_searchresult_suspicious_dns_queries_results_4f0e0c4c
-                id: logscale_saved_search.Suspicious DNS Queries
-                name: Suspicious DNS Queries
-                properties:
-                    aid: ${device_query_23e7665a.Device.query.devices.#}
-                    workflow_csv_header_fields: []
-                    workflow_export_event_query_results_to_csv: false
-        loops:
-            activity_36a1beb4_6c8b_4d6c_a279_64d503990eda_logscale_searchresult_suspicious_dns_queries_results_4f0e0c4c:
-                display: For each Event query results; Concurrently
-                for:
-                    input: event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results
-                    continue_on_partial_execution: false
-                    sequential: false
-                trigger:
-                    next:
-                        - send_email_3affc871
-                actions:
-                    send_email_3affc871:
-                        id: 07413ef9ba7c47bf5a242799f59902cc
-                        name: Send email
-                        properties:
-                            _fields:
-                                - ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.raw_results}
-                            msg: |
-                                Host ID: ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results.#.aid}
-                                DNS Count: ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results.#._count}
-                                Instance Name: ${event_query___suspicious_dns_queries_36a1beb4.LogScale.SearchResult.Suspicious_DNS_Queries.results.#.DomainName}
-                            subject: Suspicious DNS Activity - Weekly Report
-                            to:
-                                - howard.liu@crowdstrike.com
+            - event_count_is_greater_than_0
+        properties:
+            aid: '*'
+            output_files_only: false
+            workflow_csv_header_fields: []
+            workflow_export_event_query_results_to_csv: false
+        version_constraint: ~0
+    SendEmail:
+        id: 07413ef9ba7c47bf5a242799f59902cc
+        default_name: Send email
+        name: Send email
+        properties:
+            _fields:
+                - ${CIDSpecificEventQuerySuspiciousDNSQueries.raw_results}
+            msg: Rarely seen domains from this week's hunt are included below.
+            msg_type: text
+            subject: Suspicious DNS Activity - Weekly Report
+        version_constraint: ~1
+conditions:
+    event_count_is_greater_than_0:
+        next:
+            - SendEmail
+        expression: CIDSpecificEventQuerySuspiciousDNSQueries.event_count:>0
+        display:
+            - Event count is greater than 0
