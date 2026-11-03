@@ -8,7 +8,7 @@
 > [!IMPORTANT]  
 > To view this tutorial and import the app, you need access to the Falcon console.
 
-This code is the result of doing the Falcon Foundry [Create a Threat Hunting Dashboard and Scheduled Report](https://falcon.crowdstrike.com/documentation/page/t2de2d0b/create-a-threat-hunting-dashboard-and-scheduled-report) tutorial.
+This code is the result of doing the Falcon Foundry [Create a Threat Hunting Dashboard and Scheduled Report](https://docs.crowdstrike.com/access?ft:originId=t2de2d0b) tutorial.
 
 ## Prerequisites
 
